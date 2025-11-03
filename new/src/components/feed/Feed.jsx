@@ -42,16 +42,18 @@ function PostCard({ post, onSummarize }) {
 				</div>
 			</div>
 			<p className="text-gray-700 mt-3 whitespace-pre-line">{post.description}</p>
-			{post.mediaUrl && post.mediaType === "image" && (
+                    {post.mediaUrl && post.mediaType === "image" && (
 				<div className="mt-3 overflow-hidden rounded-lg border">
 					<img src={post.mediaUrl} alt="attachment" className="w-full h-auto object-cover" />
 				</div>
 			)}
-			{post.mediaUrl && post.mediaType === "video" && (
-				<div className="mt-3 overflow-hidden rounded-lg border">
-					<video src={post.mediaUrl} controls className="w-full h-auto" />
-				</div>
-			)}
+                    {post.mediaUrl && (post.mediaType === "youtube" || post.mediaType === "video") && (
+                        <div className="mt-3">
+                            <a href={post.mediaUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">
+                                {post.mediaUrl}
+                            </a>
+                        </div>
+                    )}
             <div className="mt-4 pt-3 border-t flex items-center gap-6 text-sm text-gray-600">
 				<button type="button" className="hover:text-gray-900">👍 Like</button>
 				<button type="button" className="hover:text-gray-900">💬 Comment</button>
@@ -85,8 +87,36 @@ function PostCard({ post, onSummarize }) {
 	)
 }
 
-export default function Feed({ onSummarize }) {
-	const posts = [
+export default function Feed({ onSummarize, filterAuthorId, filterMode = 'exclude' }) {
+    const [posts, setPosts] = React.useState(null);
+    React.useEffect(() => {
+        (async () => {
+            try {
+                const res = await fetch('http://localhost:3001/api/posts');
+                const data = await res.json();
+                if (data?.success && Array.isArray(data.posts)) {
+                    // Map backend fields to Feed shape
+                    const mapped = data.posts.map(p => ({
+                        id: p.id,
+                        author: p.authorName,
+                        role: p.role,
+                        timestamp: p.createdAt?.toDate ? 'now' : 'now',
+                        title: p.title,
+                        description: p.description,
+                        mediaType: p.mediaType, // 'image' or 'youtube'
+                        mediaUrl: p.mediaUrl,
+                        authorId: p.authorId,
+                    }));
+                    setPosts(mapped);
+                } else {
+                    setPosts([]);
+                }
+            } catch {
+                setPosts([]);
+            }
+        })();
+    }, []);
+    const fallbackPosts = [
 		{
 			id: 1,
 			author: "Aarya Sharma",
@@ -152,8 +182,12 @@ export default function Feed({ onSummarize }) {
 	]
 
 	return (
-		<div className="max-w-2xl mx-auto">
-			{posts.map((p) => (
+        <div className="max-w-2xl mx-auto">
+            {((posts ?? fallbackPosts).filter(p => {
+                if (!filterAuthorId) return true;
+                if (filterMode === 'only') return p.authorId === filterAuthorId;
+                return p.authorId !== filterAuthorId;
+            })).map((p) => (
 				<PostCard key={p.id} post={p} onSummarize={onSummarize} />
 			))}
 		</div>

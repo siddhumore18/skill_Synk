@@ -10,9 +10,15 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DollarSign, Briefcase, Clock, Filter, FileText, Star } from "lucide-react";
+import PostForm from "@/components/posts/PostForm";
 
 export default function FreelancerDashboard() {
   const [summary, setSummary] = useState("")
+  const currentUser = (() => {
+    try { return JSON.parse(localStorage.getItem('currentUser')) } catch { return null }
+  })()
+  const uid = currentUser?.uid || localStorage.getItem('uid') || null
+  
   return (
     <div className="theme-freelancer p-6 space-y-6">
       {/* Page header */}
@@ -35,17 +41,16 @@ export default function FreelancerDashboard() {
           <Sheet>
             <SheetTrigger asChild>
               <Button className="gap-2">
-                <FileText className="h-4 w-4" /> New Invoice
+                <FileText className="h-4 w-4" /> New Post
               </Button>
             </SheetTrigger>
-            <SheetContent>
+            <SheetContent side="right" className="w-full sm:max-w-lg p-0">
               <SheetHeader>
-                <SheetTitle>Create Invoice</SheetTitle>
-                <SheetDescription>Generate a new invoice for your client.</SheetDescription>
+                <SheetTitle>Create Post</SheetTitle>
+                <SheetDescription>Share your latest work update or availability.</SheetDescription>
               </SheetHeader>
-              <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-                <p>Enter details in your billing section.</p>
-                <p>Attach timesheet and expenses if applicable.</p>
+              <div className="p-4">
+                <PostForm />
               </div>
             </SheetContent>
           </Sheet>
@@ -182,7 +187,7 @@ export default function FreelancerDashboard() {
       {/* Feed + Right Sidebar */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <Feed onSummarize={(s) => setSummary(`${s.title} — ${s.text}`)} />
+          <Feed onSummarize={(s) => setSummary(`${s.title} — ${s.text}`)} filterAuthorId={uid} filterMode="exclude" />
         </div>
         <div className="lg:col-span-1">
           <SummaryPanel summary={summary} onClear={() => setSummary("")} />

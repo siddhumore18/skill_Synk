@@ -12,6 +12,7 @@ import EntrepreneurAnalytics from "@/pages/Entrepreneuranalytics"
 import EntrepreneurDashboard from "@/pages/entrepreneur"
 import FreelancerDashboard from "@/pages/freelancer"
 import InvestorDashboard from "@/pages/investor"
+import MyPostsPage from "@/pages/myposts"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { PieChart } from "lucide-react"
@@ -56,6 +57,9 @@ function App() {
       // Back-compat: route old analytics path to entrepreneur analytics
       setIsAuthenticated(true)
       setPage("entrepreneuranalytics")
+    } else if (path === "/myposts") {
+      setIsAuthenticated(true)
+      setPage("myposts")
     } else if (path === "/entrepreneur") {
       setIsAuthenticated(true)
       setPage("entrepreneur")
@@ -159,6 +163,7 @@ function App() {
       { title: `${roleTitle}`, icon: PieChart, url: rolePath, isActive: true },
       { title: "Messages", icon: PieChart , url: "/chat" },
       { title: "Analytics", icon: PieChart, url: analyticsPath },
+      { title: "My Posts", url: "/myposts" },
     ]
   }
   const navForRole = buildNavForRole(role)
@@ -259,6 +264,7 @@ function App() {
             {page === "entrepreneur" && <EntrepreneurDashboard />}
             {page === "freelancer" && <FreelancerDashboard />}
             {page === "investor" && <InvestorDashboard />}
+            {page === "myposts" && <MyPostsPage />}
           </main>
         </SidebarInset>
       </SidebarProvider>

@@ -5,6 +5,7 @@ import { Server } from 'socket.io';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import chatRoutes from './routes/chat.js';
+import postsRoutes from './routes/posts.js';
 import { auth, db } from './config/firebase.js';
 
 dotenv.config();
@@ -43,6 +44,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/posts', postsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

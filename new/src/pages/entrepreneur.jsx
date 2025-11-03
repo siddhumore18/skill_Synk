@@ -9,9 +9,16 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Briefcase, Rocket, Coins, CalendarDays, Users, FileText } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import PostForm from "@/components/posts/PostForm";
 
 export default function EntrepreneurDashboard() {
   const [summary, setSummary] = useState("");
+  const currentUser = (() => {
+    try { return JSON.parse(localStorage.getItem('currentUser')) } catch { return null }
+  })()
+  const uid = currentUser?.uid || localStorage.getItem('uid') || null
+  
   return (
     <div className="theme-entrepreneur p-6 space-y-6">
       {/* Page header */}
@@ -21,9 +28,21 @@ export default function EntrepreneurDashboard() {
           <p className="text-sm text-muted-foreground">Track product, team, and fundraising progress at a glance.</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="gap-2">
-            <FileText className="h-4 w-4" /> Share Update
-          </Button>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <FileText className="h-4 w-4" /> Share Update
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-full sm:max-w-lg p-0">
+              <SheetHeader>
+                <SheetTitle>Share an Update</SheetTitle>
+              </SheetHeader>
+              <div className="p-4">
+                <PostForm onSuccess={() => { /* no-op */ }} onClose={() => { const btn = document.querySelector('[data-state="open"][data-dismiss]'); }} />
+              </div>
+            </SheetContent>
+          </Sheet>
           <Button className="gap-2">
             <Rocket className="h-4 w-4" /> New Project
           </Button>
@@ -177,7 +196,7 @@ export default function EntrepreneurDashboard() {
       {/* Feed + Right Sidebar */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <Feed onSummarize={(s) => setSummary(`${s.title} — ${s.text}`)} />
+          <Feed onSummarize={(s) => setSummary(`${s.title} — ${s.text}`)} filterAuthorId={uid} filterMode="exclude" />
         </div>
         <div className="lg:col-span-1">
           <SummaryPanel summary={summary} onClear={() => setSummary("")} />
