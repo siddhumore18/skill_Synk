@@ -1,4 +1,5 @@
 import * as React from "react"
+import { getCurrentUser } from "@/services/api"
 import {
   Card,
   CardContent,
@@ -40,10 +41,10 @@ export default function ProfilePage() {
   const [isEditingPersonal, setIsEditingPersonal] = React.useState(false)
   const [isEditingBusiness, setIsEditingBusiness] = React.useState(false)
   const [personalData, setPersonalData] = React.useState({
-    fullName: "Alex Doe",
-    email: "alex.doe@example.com",
-    phone: "+1123-456-7890",
-    location: "San Francisco, CA",
+    fullName: "",
+    email: "",
+    phone: "",
+    location: "",
   })
 
   const [businessData, setBusinessData] = React.useState({
@@ -82,6 +83,39 @@ export default function ProfilePage() {
   ])
 
   const [newSkill, setNewSkill] = React.useState("")
+
+  // Load user from local storage and Firestore
+  React.useEffect(() => {
+    try {
+      const cu = getCurrentUser()
+      if (cu) {
+        setPersonalData((prev) => ({
+          ...prev,
+          fullName: cu.name || prev.fullName || "",
+          email: cu.email || prev.email || "",
+        }))
+      }
+    } catch {}
+    ;(async () => {
+      try {
+        const uid = localStorage.getItem('uid')
+        if (!uid) return
+        const res = await fetch('http://localhost:3001/api/auth/get-user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uid })
+        })
+        if (!res.ok) return
+        const data = await res.json()
+        const u = data?.user || {}
+        setPersonalData((prev) => ({
+          ...prev,
+          fullName: u.name || prev.fullName || "",
+          email: u.email || prev.email || "",
+        }))
+      } catch {}
+    })()
+  }, [])
 
   const handlePersonalChange = (e) => {
     const { name, value } = e.target
@@ -160,8 +194,8 @@ export default function ProfilePage() {
                   <div className="relative">
                     <Avatar className="h-28 w-28 border-4 border-background shadow-md">
                       <AvatarImage
-                        src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex"
-                        alt={personalData.fullName}
+                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(personalData.fullName || personalData.email || 'User')}`}
+                        alt={personalData.fullName || 'User'}
                       />
                       <AvatarFallback className="text-3xl bg-primary/10 text-primary">
                         {getInitials(personalData.fullName)}
@@ -177,7 +211,7 @@ export default function ProfilePage() {
 
                   {/* Name and Title */}
                   <div className="space-y-1">
-                    <h2 className="text-xl font-bold">{personalData.fullName}</h2>
+                    <h2 className="text-xl font-bold">{personalData.fullName || 'User'}</h2>
                     <p className="text-sm text-muted-foreground">
                       Founder & CEO at {businessData.companyName}
                     </p>

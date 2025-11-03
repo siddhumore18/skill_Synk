@@ -119,9 +119,27 @@ function getUserRole() {
   return r || "entrepreneur";
 }
 
+function getUserInfo() {
+  try {
+    const cuStr = localStorage.getItem("currentUser");
+    if (cuStr) {
+      const cu = JSON.parse(cuStr);
+      if (cu && (cu.name || cu.email)) {
+        return {
+          name: cu.name || (cu.email ? cu.email.split('@')[0] : 'User'),
+          email: cu.email || 'user@example.com',
+          avatar: "/placeholder.svg",
+        };
+      }
+    }
+  } catch {}
+  return null;
+}
+
 export function AppSidebar({ user, teams, navMain, projects, onNavigate, ...props }) {
+  const runtimeUser = getUserInfo();
   const merged = {
-    user: user || data.user,
+    user: user || runtimeUser || data.user,
     teams: teams || data.teams,
     navMain: navMain || data.navMain,
     projects: projects || data.projects,
