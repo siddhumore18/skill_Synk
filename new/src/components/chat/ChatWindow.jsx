@@ -1,5 +1,5 @@
 import * as React from "react"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Video } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -20,6 +20,19 @@ export function ChatWindow({
   connectionStatus = "connected",
   className,
 }) {
+  const getUserRole = React.useCallback(() => {
+    try {
+      const cuStr = localStorage.getItem("currentUser")
+      if (cuStr) {
+        const cu = JSON.parse(cuStr)
+        if (cu && cu.role) return cu.role
+      }
+    } catch {}
+    const r = localStorage.getItem("role")
+    return r || "entrepreneur"
+  }, [])
+  const role = getUserRole()
+  const roleLabel = role ? role.charAt(0).toUpperCase() + role.slice(1) : ""
   const messagesEndRef = React.useRef(null)
   const scrollAreaRef = React.useRef(null)
 
@@ -81,15 +94,22 @@ export function ChatWindow({
               )}>
               <span className="sr-only">{user.status}</span>
             </Badge>
+            
           </div>
           <p className="text-xs text-muted-foreground capitalize">
             {user.status}
           </p>
         </div>
+        <Button variant="ghost" size="icon" aria-label="Start video call">
+          <Video className="h-5 w-5" />
+        </Button>
         <Badge
           variant={connectionStatus === "connected" ? "default" : "secondary"}
           className="text-xs">
           {connectionStatus === "connected" ? "Connected" : "Disconnected"}
+        </Badge>
+        <Badge variant="secondary" className="text-xs">
+          {roleLabel}
         </Badge>
       </div>
 
