@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-<<<<<<< HEAD
 import Feed from "@/components/feed/Feed";
 import SummaryPanel from "@/components/feed/SummaryPanel";
-=======
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -12,7 +10,6 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { DollarSign, Briefcase, Clock, Filter, FileText, Star } from "lucide-react";
->>>>>>> 3062aca8746b521d2f61851f77189890f3e9d8eb
 
 export default function FreelancerDashboard() {
   const [summary, setSummary] = useState("")

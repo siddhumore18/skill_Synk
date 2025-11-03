@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-<<<<<<< HEAD
 import Feed from "@/components/feed/Feed";
 import SummaryPanel from "@/components/feed/SummaryPanel";
-=======
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Briefcase, Rocket, Coins, CalendarDays, Users, FileText } from "lucide-react";
->>>>>>> 3062aca8746b521d2f61851f77189890f3e9d8eb
 
 export default function EntrepreneurDashboard() {
   const [summary, setSummary] = useState("");
@@ -67,49 +64,7 @@ export default function EntrepreneurDashboard() {
         </Card>
       </div>
 
-<<<<<<< HEAD
-      <Card>
-        <CardHeader>
-          <CardTitle>Overview</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="milestones">
-            <TabsList>
-              <TabsTrigger value="milestones">Milestones</TabsTrigger>
-              <TabsTrigger value="team">Team</TabsTrigger>
-              <TabsTrigger value="fundraising">Fundraising</TabsTrigger>
-            </TabsList>
-            <TabsContent value="milestones">
-              <ul className="list-disc pl-6 space-y-2 text-sm text-muted-foreground">
-                <li>Beta launch in 2 weeks</li>
-                <li>Onboard 10 pilot customers</li>
-                <li>Finalize pricing tiers</li>
-              </ul>
-            </TabsContent>
-            <TabsContent value="team">
-              <ul className="list-disc pl-6 space-y-2 text-sm text-muted-foreground">
-                <li>Hiring frontend engineer</li>
-                <li>Contract designer for brand refresh</li>
-              </ul>
-            </TabsContent>
-            <TabsContent value="fundraising">
-              <ul className="list-disc pl-6 space-y-2 text-sm text-muted-foreground">
-                <li>Target: Seed extension $500k</li>
-                <li>3 meetings scheduled this week</li>
-              </ul>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
-
-      {/* Feed + Right Sidebar */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <Feed onSummarize={(s) => setSummary(`${s.title} — ${s.text}`)} />
-        </div>
-        <div className="lg:col-span-1">
-          <SummaryPanel summary={summary} onClear={() => setSummary("")} />
-=======
+      {/* Overview + sidebar widgets */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Main overview */}
         <Card className="lg:col-span-2">
@@ -216,7 +171,16 @@ export default function EntrepreneurDashboard() {
               <Button variant="secondary" size="sm" className="gap-2"><Coins className="h-4 w-4" /> Update metrics</Button>
             </CardContent>
           </Card>
->>>>>>> 3062aca8746b521d2f61851f77189890f3e9d8eb
+        </div>
+      </div>
+
+      {/* Feed + Right Sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <Feed onSummarize={(s) => setSummary(`${s.title} — ${s.text}`)} />
+        </div>
+        <div className="lg:col-span-1">
+          <SummaryPanel summary={summary} onClear={() => setSummary("")} />
         </div>
       </div>
     </div>
