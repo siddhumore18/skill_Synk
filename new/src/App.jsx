@@ -12,6 +12,7 @@ import EntrepreneurAnalytics from "@/pages/Entrepreneuranalytics"
 import EntrepreneurDashboard from "@/pages/entrepreneur"
 import FreelancerDashboard from "@/pages/freelancer"
 import InvestorDashboard from "@/pages/investor"
+
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { PieChart } from "lucide-react"
@@ -31,6 +32,10 @@ function App() {
     } else if (path === "/login") {
       setPage("login")
       setIsAuthenticated(false)
+    } else if (path === "/") {
+      // Landing page for unauthenticated users
+      setIsAuthenticated(false)
+      setPage("landing")
     } else if (path === "/dashboard") {
       setIsAuthenticated(true)
       // Map generic dashboard to current role-specific page
@@ -162,6 +167,13 @@ function App() {
     ]
   }
   const navForRole = buildNavForRole(role)
+
+  // ---------- LOGIN PAGE ----------
+  if (!isAuthenticated && page === "landing") {
+    return (
+      <Landing />
+    )
+  }
 
   // ---------- LOGIN PAGE ----------
   if (!isAuthenticated && page === "login") {
