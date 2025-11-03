@@ -85,7 +85,7 @@ const data = {
     {
       title: "Analytics",
       url: "/analytics",
-      icon: PieChart,
+      icon: Frame,
     },
   ],
   projects: [

@@ -12,6 +12,7 @@ import FreelancerDashboard from "@/pages/freelancer"
 import InvestorDashboard from "@/pages/investor"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import { PieChart } from "lucide-react"
 
 function App() {
   const [page, setPage] = useState("login")
@@ -99,7 +100,7 @@ function App() {
     return [
       { title: `${roleTitle}`, url: rolePath, isActive: true },
       { title: "Messages", url: "/chat" },
-      { title: "Analytics", url: "/analytics" },
+      { title: "Analytics", icon: PieChart, url: "/analytics" },
     ]
   }
   const navForRole = buildNavForRole(role)
