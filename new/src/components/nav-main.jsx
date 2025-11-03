@@ -33,13 +33,15 @@ export function NavMain({
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip={item.title} asChild>
-                  <a href={item.url} onClick={(e) => {
-                    if (onNavigate && item.url && item.url.startsWith('/')) {
-                      e.preventDefault()
-                      onNavigate(item.url)
-                    }
-                  }}>
-                    {item.icon && <item.icon />}
+                  <a
+                    href={item.url}
+                    onClick={(e) => {
+                      if (onNavigate && item.url && item.url.startsWith('/')) {
+                        e.preventDefault()
+                        onNavigate(item.url)
+                      }
+                    }}>
+                    {item.icon && <item.icon className="size-4 text-foreground" />}
                     <span>{item.title}</span>
                     {/* <ChevronRight
                       className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" /> */}
