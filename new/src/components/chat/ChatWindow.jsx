@@ -1,7 +1,9 @@
 import * as React from "react"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Video } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
@@ -20,6 +22,20 @@ export function ChatWindow({
   connectionStatus = "connected",
   className,
 }) {
+  const [scheduleOpen, setScheduleOpen] = React.useState(false)
+  const getUserRole = React.useCallback(() => {
+    try {
+      const cuStr = localStorage.getItem("currentUser")
+      if (cuStr) {
+        const cu = JSON.parse(cuStr)
+        if (cu && cu.role) return cu.role
+      }
+    } catch {}
+    const r = localStorage.getItem("role")
+    return r || "entrepreneur"
+  }, [])
+  const role = getUserRole()
+  const roleLabel = role ? role.charAt(0).toUpperCase() + role.slice(1) : ""
   const messagesEndRef = React.useRef(null)
   const scrollAreaRef = React.useRef(null)
 
@@ -81,19 +97,68 @@ export function ChatWindow({
               )}>
               <span className="sr-only">{user.status}</span>
             </Badge>
+            
           </div>
           <p className="text-xs text-muted-foreground capitalize">
             {user.status}
           </p>
         </div>
+        <Button variant="ghost" size="icon" aria-label="Start video call" onClick={() => setScheduleOpen(true)}>
+          <Video className="h-5 w-5" />
+        </Button>
         <Badge
           variant={connectionStatus === "connected" ? "default" : "secondary"}
           className="text-xs">
           {connectionStatus === "connected" ? "Connected" : "Disconnected"}
         </Badge>
+        <Badge variant="secondary" className="text-xs">
+          {roleLabel}
+        </Badge>
       </div>
 
       <Separator />
+
+      {/* Schedule Meeting Popup */}
+      <Sheet open={scheduleOpen} onOpenChange={setScheduleOpen}>
+        <SheetContent side="right" className="w-full sm:w-[380px]">
+          <SheetHeader>
+            <SheetTitle>Schedule a meeting</SheetTitle>
+            <SheetDescription>
+              Send a quick invite to {user?.name}.
+            </SheetDescription>
+          </SheetHeader>
+          <div className="mt-4 space-y-3">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium" htmlFor="meet-title">Title</label>
+              <Input id="meet-title" placeholder="e.g. Project kickoff" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium" htmlFor="meet-date">Date</label>
+                <Input id="meet-date" type="date" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium" htmlFor="meet-time">Time</label>
+                <Input id="meet-time" type="time" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium" htmlFor="meet-duration">Duration (mins)</label>
+                <Input id="meet-duration" type="number" min={15} step={15} placeholder="30" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium" htmlFor="meet-link">Video link</label>
+                <Input id="meet-link" placeholder="https://... (optional)" />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-1">
+              <Button variant="secondary" onClick={() => setScheduleOpen(false)}>Cancel</Button>
+              <Button onClick={() => setScheduleOpen(false)}>Schedule</Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Messages Area */}
       <ScrollArea className="flex-1 min-h-0" ref={scrollAreaRef}>
