@@ -25,7 +25,24 @@ export function MessageBubble({ message, isOwn = false }) {
               : "bg-muted text-foreground rounded-tl-sm"
           )}>
           <p className="text-sm whitespace-pre-wrap break-words">
-            {message.content}
+            {message.content.split(/(https?:\/\/[^\s]+)/g).map((part, i) => 
+              part.match(/^https?:\/\//) ? (
+                <a 
+                  key={i} 
+                  href={part} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className={cn(
+                    "underline transition-colors break-all",
+                    isOwn 
+                      ? "text-white hover:text-white/80" 
+                      : "text-primary hover:text-primary/80"
+                  )}
+                >
+                  {part}
+                </a>
+              ) : part
+            )}
           </p>
         </div>
         <span className="text-xs text-muted-foreground mt-1 px-1">
