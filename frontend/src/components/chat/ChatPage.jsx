@@ -123,11 +123,7 @@ export function ChatPage({ className }) {
     newSocket.on('disconnect', () => {
       console.log('Socket.IO disconnected')
       setConnectionStatus("disconnected")
-      toast({
-        title: "Disconnected",
-        description: "Connection to chat server lost",
-        variant: "destructive",
-      })
+      // Suppress disconnect toast to avoid distracting popup
     })
 
     newSocket.on('message', (message) => {

@@ -340,5 +340,15 @@ export const chatAPI = {
   },
 };
 
+// Meetings API
+export const meetingsAPI = {
+  schedule: async ({ participantId, participantName }) => {
+    return await apiRequest('/meetings/schedule', {
+      method: 'POST',
+      body: JSON.stringify({ participantId, participantName }),
+    });
+  },
+};
+
 export { getAuthToken, setAuthToken, getCurrentUser, setCurrentUser };
 

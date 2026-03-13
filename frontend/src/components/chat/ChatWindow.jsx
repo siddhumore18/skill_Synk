@@ -11,7 +11,7 @@ import { MessageBubble } from "./MessageBubble"
 import { MessageInput } from "./MessageInput"
 import { TypingIndicator } from "./TypingIndicator"
 import { cn } from "@/lib/utils"
-import { getCurrentUser } from "@/services/api"
+import { getCurrentUser, meetingsAPI } from "@/services/api"
 
 export function ChatWindow({
   user,
@@ -23,6 +23,8 @@ export function ChatWindow({
   className,
 }) {
   const [scheduleOpen, setScheduleOpen] = React.useState(false)
+  const [meetingLoading, setMeetingLoading] = React.useState(false)
+  const [meetingLink, setMeetingLink] = React.useState(null)
   const getUserRole = React.useCallback(() => {
     try {
       const cuStr = localStorage.getItem("currentUser")
@@ -127,35 +129,34 @@ export function ChatWindow({
               Send a quick invite to {user?.name}.
             </SheetDescription>
           </SheetHeader>
-          <div className="mt-4 space-y-3">
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium" htmlFor="meet-title">Title</label>
-              <Input id="meet-title" placeholder="e.g. Project kickoff" />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium" htmlFor="meet-date">Date</label>
-                <Input id="meet-date" type="date" />
+          <div className="mt-4 space-y-4">
+            {!meetingLink ? (
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">Create a LiveKit meeting and share the invite link.</p>
+                <Button disabled={meetingLoading} onClick={async () => {
+                  try {
+                    setMeetingLoading(true)
+                    const res = await meetingsAPI.schedule({ participantId: user?.id, participantName: user?.name })
+                    setMeetingLink(res?.links?.host || null)
+                  } catch (e) {
+                    console.error('Schedule meeting failed', e)
+                  } finally {
+                    setMeetingLoading(false)
+                  }
+                }}>{meetingLoading ? 'Creating…' : 'Create meeting now'}</Button>
               </div>
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium" htmlFor="meet-time">Time</label>
-                <Input id="meet-time" type="time" />
+            ) : (
+              <div className="space-y-3">
+                <div>
+                  <label className="text-sm font-medium">Your join link</label>
+                  <Input readOnly value={meetingLink} onFocus={(e) => e.target.select()} />
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button variant="secondary" onClick={() => navigator.clipboard.writeText(meetingLink)}>Copy</Button>
+                  <Button onClick={() => window.open(meetingLink, '_blank')}>Join now</Button>
+                </div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium" htmlFor="meet-duration">Duration (mins)</label>
-                <Input id="meet-duration" type="number" min={15} step={15} placeholder="30" />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium" htmlFor="meet-link">Video link</label>
-                <Input id="meet-link" placeholder="https://... (optional)" />
-              </div>
-            </div>
-            <div className="flex justify-end gap-2 pt-1">
-              <Button variant="secondary" onClick={() => setScheduleOpen(false)}>Cancel</Button>
-              <Button onClick={() => setScheduleOpen(false)}>Schedule</Button>
-            </div>
+            )}
           </div>
         </SheetContent>
       </Sheet>
